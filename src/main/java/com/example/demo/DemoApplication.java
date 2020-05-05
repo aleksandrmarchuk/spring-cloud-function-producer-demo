@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +15,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Supplier;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @SpringBootApplication
 @Controller
@@ -36,7 +33,6 @@ public class DemoApplication {
     public Mono<Void> delegateToSupplier(@RequestBody String body) {
         Message<DemoMessage> message = MessageBuilder
                 .withPayload(new DemoMessage(body))
-                .setHeader(MessageHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .build();
 
         processor.onNext(message);
@@ -51,10 +47,22 @@ public class DemoApplication {
 
     private static class DemoMessage {
 
-        private final String body;
+        private String body;
 
         public DemoMessage(String body) {
             this.body = body;
         }
+
+        // TODO: intentionally removed to reproduce conversion issue
+//        public DemoMessage() {
+//        }
+//
+//        public String getBody() {
+//            return body;
+//        }
+//
+//        public void setBody(String body) {
+//            this.body = body;
+//        }
     }
 }
